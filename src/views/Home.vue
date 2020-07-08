@@ -1,18 +1,34 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="layout">
+    <global-header></global-header>
+    <div class="lance-main">
+      <router-view :key="$route.fullPath" />
+    </div>
+    <div class="lance-footer"></div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import SideBox from "@/components/SideBox";
+import GlobalHeader from "@/components/GlobalHeader";
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    HelloWorld
+    SideBox,
+    GlobalHeader
   }
-}
+};
 </script>
+<style scoped>
+#layout {
+  min-height: 200px;
+}
+.lance-main {
+  position: relative;
+  padding-top: 10px;
+  margin: 0px auto 0px;
+  width: 100%;
+  min-height: 800px;
+}
+</style>
