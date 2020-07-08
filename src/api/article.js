@@ -68,3 +68,13 @@ export function addLike(userId, articleId) {
         }
     })
 }
+
+export function deleteArticle(articleId) {
+    return axios({
+        url: '/article/deleteArticle',
+        method: 'post',
+        params: {
+            articleId
+        }
+    })
+}

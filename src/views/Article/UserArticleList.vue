@@ -21,17 +21,38 @@
           </ul>
           <div class="entry-action-box">
             <div class="read-action view-count">{{`阅读`+article.articleViews}}</div>
+            <div class="read-action more-action" @click="openEdit(article)">
+              <div class="icon ion-ios-more">
+                <icon-font type="icon-more" style="fontSize:1.4rem" />
+              </div>
+              <div class="more-action-list" v-show="article.isShow">
+                <div class="more-action-item" @click="editArticle(article)">编辑</div>
+                <div class="more-action-item" @click="showModal(article)">删除</div>
+              </div>
+            </div>
           </div>
         </div>
       </li>
     </ul>
+    <a-modal v-model="visible" title="提示" @ok="deleteArticle(articleForEdit)">
+      <h3>删除文章后不可恢复，确认删除吗？</h3>
+    </a-modal>
   </div>
 </template>
 <script>
 import { getArticleListByUser } from "@/api/user.js";
+import { deleteArticle } from "@/api/article.js";
 import { publishDate } from "@/utils/date";
+import { Icon, Tag } from "ant-design-vue";
+import globalObj from "@/global";
+const IconFont = Icon.createFromIconfontCN({
+  scriptUrl: globalObj.iconfontUrl
+});
 export default {
   name: "UserArticleList",
+  components: {
+    IconFont
+  },
   data() {
     return {
       articleList: {
@@ -39,8 +60,11 @@ export default {
         articleTitle: "",
         articleDate: "",
         articleViews: "",
-        labelId: ""
-      }
+        labelId: "",
+        isShow: false //表示当前文章的编辑删除弹窗不可见
+      },
+      visible: false,
+      articleForEdit: {}
     };
   },
   computed: {
@@ -60,11 +84,30 @@ export default {
             articleTitle: res.data[i].article.articleTitle,
             articleDate: publishDate(res.data[i].article.articleDate),
             articleViews: res.data[i].article.articleViews,
-            labelId: res.data[i].labelId
+            labelId: res.data[i].labelId,
+            isShow: false
           };
           this.articleList.push(article);
         }
       });
+    },
+    openEdit(article) {
+      article.isShow = !article.isShow;
+    },
+    deleteArticle(article) {
+      deleteArticle(article.articleId).then(() => {
+        this.articleList.splice(
+          this.articleList.findIndex(
+            item => item.articleId == article.articleId
+          ),
+          1
+        );
+        this.visible = false;
+      });
+    },
+    showModal(article) {
+      this.visible = true;
+      this.articleForEdit = article;
     }
   },
   mounted() {
@@ -141,6 +184,7 @@ li {
 .entry-action-box {
   display: flex;
   align-items: center;
+  font-size: 1rem;
 }
 .action {
   cursor: pointer;
@@ -171,5 +215,27 @@ img {
   align-items: center;
   margin-top: 1.5rem;
   color: rgba(24, 37, 50, 0.3);
+}
+.read-action .icon {
+  font-size: 2rem;
+  cursor: pointer;
+}
+.more-action-list {
+  position: absolute;
+  padding: 1rem 0;
+  right: -2.5rem;
+  top: -0.6rem;
+  min-width: 10rem;
+  white-space: nowrap;
+  border-radius: 2px;
+  border: 1px solid #f1f1f1;
+  background-color: #fff;
+  box-shadow: 0 1px 2px 1px hsla(0, 0%, 94.5%, 0.5);
+  transform: translateY(-100%);
+}
+.more-action-item {
+  padding: 0.6rem 2rem;
+  color: #8b8b8b;
+  cursor: pointer;
 }
 </style>
