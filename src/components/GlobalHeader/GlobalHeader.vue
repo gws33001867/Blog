@@ -60,12 +60,12 @@
                 <span>设置</span>
               </router-link>
             </li>
-            <li>
+            <!-- <li>
               <a href>
                 <icon-font type="icon-combinedshapecopy2" />
                 <span>写文章</span>
               </a>
-            </li>
+            </li>-->
             <li>
               <router-link @click.native="logout" to>
                 <icon-font type="icon-log-out" />
@@ -196,7 +196,6 @@ export default {
       article_title: "",
       seen: true,
       seen2: false,
-      seen_home: true, //如果非发布文章，header显示列表，否则切换为文章标题的输入
       seen_save: false, //文章保存按钮
       oktext: "",
       userName: "",
@@ -205,7 +204,6 @@ export default {
       Title: "用户注册",
       login_flag: false, //模态框登录表单显示
       flag: true, //模态框注册表单显示
-      // 用户注册校验属性
       boolean_userName: false,
       boolean_password: false,
       boolean_confirmpassword: false,
@@ -236,7 +234,15 @@ export default {
       );
     },
     avatar: function() {
+      if (this.$store.getters.avatar == null) {
+        return "./default.jpg";
+      }
+      console.log(this.$store.getters.avatar);
       return this.$srcUrl + this.$store.getters.avatar;
+    },
+    seen_home: function() {
+      console.log(this.$store.getters.seen_home);
+      return this.$store.getters.seen_home;
     }
   },
   watch: {
@@ -309,7 +315,7 @@ export default {
           this.init();
           this.seen = false;
           this.seen2 = true;
-          this.seen_home = true;
+          //this.seen_home = true;
           //this.avatar = this.$srcUrl + this.$store.getters.avatar;
         });
         console.log(this.$store.getters);
@@ -358,16 +364,12 @@ export default {
       }
     },
     logout() {
-      this.$store.dispatch("user/resetToken").then(() => {
-        this.$router.go(0);
-      });
+      this.$store.dispatch("user/logout").then(() => {});
+      this.$router.go(0);
     },
     publish() {
       if (this.$store.getters.name) {
-        //this.$store.dispatch()
-        //this.seen_home = this.$store.getters.seen_home;
         this.$router.push("/publish");
-        this.seen_home = this.$store.getters.seen_home;
       }
     },
     saveData() {
@@ -375,7 +377,6 @@ export default {
         title: this.article_title,
         tag: this.addTags[0]
       };
-      console.log(this.addTags[0]);
       if (typeof this.addTags[0] == "undefined") {
         alert("请选择标签");
       } else {
@@ -385,15 +386,15 @@ export default {
     goHome() {
       //console.log(this);
       this.$router.push("/index");
-      this.seen_home = this.$store.getters.seen_home;
+      //this.seen_home = this.$store.getters.seen_home;
     },
     goUser() {
       this.$router.push("/user");
-      this.seen_home = this.$store.getters.seen_home;
+      //this.seen_home = this.$store.getters.seen_home;
     },
     goUserInfo() {
       this.$router.push("/userInfo");
-      this.seen_home = this.$store.getters.seen_home;
+      // this.seen_home = this.$store.getters.seen_home;
     },
     handleChange() {
       getTags(this.tags.trim()).then(res => {
@@ -457,7 +458,7 @@ export default {
       this.seen = false;
       this.seen2 = true;
     }
-    this.seen_home = this.$store.getters.seen_home;
+    // this.seen_home = this.$store.getters.seen_home;
     //console.log(this.$store);
   },
   mounted() {
@@ -468,6 +469,7 @@ export default {
     });
 
     eventBus.$on("removeClick", () => {
+      this.seen_tag = false;
       document.removeEventListener("click", this.openTag);
     });
   }

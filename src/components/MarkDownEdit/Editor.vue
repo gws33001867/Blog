@@ -38,7 +38,6 @@ export default {
   },
   created() {
     eventBus.$on("save", data => {
-      console.log(data);
       const article = {
         userId: this.$store.getters.userId,
         articleTitle: data.title,
@@ -48,6 +47,7 @@ export default {
       };
       addArticle(article).then(result => {
         console.log(result);
+        this.$router.push("/published");
       });
     });
   },

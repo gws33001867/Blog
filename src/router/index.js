@@ -98,12 +98,14 @@ router.beforeEach(async (to, from, next) => {
 
 
     if (to.matched.some(record => record.meta.requiresAuth) && (!token || token === null)) {
-        next({
-            path: '/index',
-            query: {
-                redirect: to.fullPath
-            }
-        })
+        //避免在首页时不跳转
+        location = '/index'
+        // next({
+        //     path: '/index',
+        //     query: {
+        //         redirect: to.fullPath
+        //     }
+        // })
     } else {
         next()
     }

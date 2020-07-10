@@ -3,6 +3,8 @@ import axios from 'axios'
 import {
     getToken
 } from '@/utils/auth'
+
+//注册
 const register = data => {
     return request({
         url: '/user/register',
@@ -10,6 +12,8 @@ const register = data => {
         data
     })
 }
+
+//登录
 const login = data => {
     return request({
         url: '/user/login',
@@ -18,6 +22,7 @@ const login = data => {
     })
 }
 
+//获取用户信息
 const getInfo = token => {
     return request({
         url: '/user/info',
@@ -28,6 +33,7 @@ const getInfo = token => {
     })
 }
 
+//修改用户名
 const changeName = (name, userId) => {
     return request({
         url: '/user/changeName',

@@ -101,7 +101,23 @@ const actions = {
             removeToken()
             resolve()
         })
-    }
+    },
+
+    // user logout
+    logout({
+        commit,
+        state
+    }) {
+        return new Promise((resolve, reject) => {
+
+            commit('SET_TOKEN', '')
+            commit('SET_NAME', '')
+            commit('SET_USERID', '')
+            commit('SET_AVATAR', '')
+            removeToken()
+        })
+    },
+
 }
 
 

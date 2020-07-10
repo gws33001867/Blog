@@ -108,7 +108,8 @@ export default {
     showModal(article) {
       this.visible = true;
       this.articleForEdit = article;
-    }
+    },
+    editArticle(article) {}
   },
   mounted() {
     this.articleList = [];

@@ -1,5 +1,6 @@
 import axios from './http'
 
+//获取文章列表
 export function getArticle(pageNo, pageSize, queryBy, articleId) {
     console.log("debug:" + pageNo, +pageSize + queryBy + articleId);
     return axios({
@@ -13,6 +14,8 @@ export function getArticle(pageNo, pageSize, queryBy, articleId) {
         }
     })
 }
+
+//发布文章
 export function addArticle(data) {
     return axios({
         url: '/article/add',
@@ -20,6 +23,7 @@ export function addArticle(data) {
         data
     })
 }
+//通过文章id获取文章信息
 export function getArticleById(id) {
     return axios({
         url: '/article/getById',
@@ -30,6 +34,7 @@ export function getArticleById(id) {
     })
 }
 
+//获取标签
 export function getTags(tag) {
     return axios({
         url: '/article/getTags',
@@ -40,6 +45,7 @@ export function getTags(tag) {
     })
 }
 
+//评论
 export function addComment(data) {
     return axios({
         url: '/article/comment',
@@ -48,6 +54,7 @@ export function addComment(data) {
     })
 }
 
+//获取用户是否点赞该文章
 export function getUserLike(userId, articleId) {
     return axios({
         url: '/article/isUserLike',
@@ -58,6 +65,8 @@ export function getUserLike(userId, articleId) {
         }
     })
 }
+
+//点赞
 export function addLike(userId, articleId) {
     return axios({
         url: '/article/addLike',
@@ -69,6 +78,7 @@ export function addLike(userId, articleId) {
     })
 }
 
+//删除文章
 export function deleteArticle(articleId) {
     return axios({
         url: '/article/deleteArticle',
