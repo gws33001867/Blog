@@ -43,7 +43,8 @@ const routes = [{
             path: '/publish',
             component: Editor,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                keepAlive: true
             }
         }, {
             path: '/user',
@@ -84,11 +85,9 @@ router.beforeEach(async (to, from, next) => {
         document.title = to.meta.title
     }
 
-    console.log(to.path)
 
     if (token && !store.getters.name) {
         await store.dispatch("user/getInfo", token)
-        console.log("获取用户信息")
     }
     if (to.path == "/publish" && store.getters.name) {
         await store.dispatch("header/initHeader", false)

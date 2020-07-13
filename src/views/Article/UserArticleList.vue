@@ -109,7 +109,19 @@ export default {
       this.visible = true;
       this.articleForEdit = article;
     },
-    editArticle(article) {}
+    editArticle(article) {
+      if (this.$store.getters.name) {
+        let url = this.$router.resolve({
+          path: "publish",
+          query: {
+            editFlag: "true",
+            articleId: article.articleId,
+            publishOrEdit: "更新"
+          }
+        });
+        window.open(url.href, "_blank");
+      }
+    }
   },
   mounted() {
     this.articleList = [];

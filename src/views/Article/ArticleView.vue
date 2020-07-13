@@ -100,7 +100,7 @@
           <li @click="goAnchor">
             <icon-font style="fontSize:20px;" type="icon-pinglun" />
           </li>
-          <li @click="success">
+          <li>
             <icon-font style="fontSize:20px;" type="icon-shoucang" />
           </li>
           <li>
@@ -260,7 +260,6 @@ export default {
             if (res.data === 1) {
               this.isUserLike = false;
               this.countDianzan--;
-              console.log(typeof res.data);
             } else {
               this.isUserLike = true;
               this.countDianzan++;
@@ -268,9 +267,6 @@ export default {
           }
         );
       }
-    },
-    success() {
-      this.$router.push("/published");
     }
   }
 };

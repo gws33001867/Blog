@@ -38,7 +38,7 @@
         @click="showModal"
         v-if="seen"
       >注册</a-button>
-      <a-button style="margin-left:400px" id="openTagPanel" v-if="seen_save">发布</a-button>
+      <a-button style="margin-left:400px" id="openTagPanel" v-if="seen_save">{{publishOrEdit}}</a-button>
       <a-popover placement="bottomRight" trigger="click">
         <template slot="content">
           <ul>
@@ -77,7 +77,7 @@
         <a-avatar :size="38" :src="avatar" style="margin-left:50px;cursor: pointer;" v-if="seen2" />
       </a-popover>
       <div class="article-tag" id="articleTag" v-show="seen_tag">
-        <div class="title" style="padding-bottom:10px;">发布文章</div>
+        <div class="title" style="padding-bottom:10px;">文章</div>
         <div style="width:100%">
           <span style="font-size:1rem">标签</span>
           <div style="display:flex;flex-wrap: wrap;">
@@ -102,7 +102,7 @@
         <ul>
           <li @click="addTag(tag)" v-for="(tag,id) in articletags" :key="id">{{tag.labelName}}</li>
         </ul>
-        <a-button @click.prevent="saveData">确定并发布</a-button>
+        <a-button @click.prevent="saveData">确定并{{publishOrEdit}}</a-button>
       </div>
     </div>
     <!-- 注册与登录模态框 -->
@@ -196,7 +196,6 @@ export default {
       article_title: "",
       seen: true,
       seen2: false,
-      seen_save: false, //文章保存按钮
       oktext: "",
       userName: "",
       login_userName: "",
@@ -222,7 +221,8 @@ export default {
       articletags: [],
       addTags: [],
       seen_tag: false,
-      seen_input: true
+      seen_input: true,
+      publishOrEdit: "发布"
     };
   },
   computed: {
@@ -237,21 +237,14 @@ export default {
       if (this.$store.getters.avatar == null) {
         return "./default.jpg";
       }
-      console.log(this.$store.getters.avatar);
+
       return this.$srcUrl + this.$store.getters.avatar;
     },
     seen_home: function() {
-      console.log(this.$store.getters.seen_home);
       return this.$store.getters.seen_home;
-    }
-  },
-  watch: {
-    seen_home(value) {
-      if (value) {
-        this.seen_save = false;
-      } else {
-        this.seen_save = true;
-      }
+    },
+    seen_save: function() {
+      return !this.$store.getters.seen_home;
     }
   },
   methods: {
@@ -305,7 +298,6 @@ export default {
           }
         });
       } else if (this.login_flag) {
-        console.log("登录");
         const data = {
           userName: this.login_userName,
           password: this.login_password
@@ -318,7 +310,6 @@ export default {
           //this.seen_home = true;
           //this.avatar = this.$srcUrl + this.$store.getters.avatar;
         });
-        console.log(this.$store.getters);
       }
     },
     checkName() {
@@ -369,7 +360,12 @@ export default {
     },
     publish() {
       if (this.$store.getters.name) {
-        this.$router.push("/publish");
+        //this.$router.push("/publish");
+        let routeUrl = this.$router.resolve({
+          path: "/publish",
+          query: { publishOrEdit: "发布" }
+        });
+        window.open(routeUrl.href, "_blank");
       }
     },
     saveData() {
@@ -408,7 +404,6 @@ export default {
       //阻止点击事件的冒泡
       event.stopPropagation();
       this.addTags = [];
-      console.log(this.seen_tag);
       this.seen_input = true;
     },
     addTag(tag) {
@@ -450,6 +445,20 @@ export default {
       } else {
         flag.seen_tag = false;
       }
+    },
+    clickBind() {
+      //点击article-tag弹窗外部关闭弹窗
+      // eventBus.$on("addClick", () => {
+      //console.log("addClick:" + this.seen_tag);
+      console.log("aa");
+      document.addEventListener("click", this.openTag);
+      // });
+    },
+    removeClickBind() {
+      // eventBus.$on("removeClick", () => {
+      this.seen_tag = false;
+      document.removeEventListener("click", this.openTag);
+      // });
     }
   },
   created() {
@@ -458,20 +467,47 @@ export default {
       this.seen = false;
       this.seen2 = true;
     }
-    // this.seen_home = this.$store.getters.seen_home;
-    //console.log(this.$store);
   },
   mounted() {
-    //点击article-tag弹窗外部关闭弹窗
-    eventBus.$on("addClick", () => {
-      //console.log("addClick:" + this.seen_tag);
-      document.addEventListener("click", this.openTag);
+    // //点击article-tag弹窗外部关闭弹窗
+    // eventBus.$on("addClick", () => {
+    //   //console.log("addClick:" + this.seen_tag);
+    //   document.addEventListener("click", this.openTag);
+    // });
+
+    // eventBus.$on("removeClick", () => {
+    //   this.seen_tag = false;
+    //   document.removeEventListener("click", this.openTag);
+    // });
+    // this.clickBind();
+    // this.removeClickBind();
+    eventBus.$on("addClickBind", () => {
+      console.log(111);
+      this.clickBind();
+    });
+    eventBus.$on("removeClickBind", () => {
+      this.removeClickBind();
     });
 
-    eventBus.$on("removeClick", () => {
-      this.seen_tag = false;
-      document.removeEventListener("click", this.openTag);
+    eventBus.$on("setTitleAndTag", data => {
+      this.article_title = data.title;
+      this.addTags.push({
+        labelName: data.labelName,
+        labelId: data.labelId
+      });
+      this.seen_input = false;
     });
+    eventBus.$on("buttonName", data => {
+      console.log(data);
+      this.publishOrEdit = data;
+    });
+
+    // eventBus.$on("initPublish", () => {
+    //   location.reload();
+    // });
+  },
+  beforeRouteUpdate() {
+    console.log(asa);
   }
 };
 </script>

@@ -13,7 +13,7 @@
 <script>
 import marked from "marked";
 
-import { addArticle } from "@/api/article";
+import { addArticle, editArticle, getArticleById } from "@/api/article";
 import eventBus from "@/eventBus";
 const markdownOption = {
   bold: true, // 粗体
@@ -37,6 +37,7 @@ export default {
     }
   },
   created() {
+    eventBus.$emit("initPublish", null);
     eventBus.$on("save", data => {
       const article = {
         userId: this.$store.getters.userId,
@@ -45,23 +46,74 @@ export default {
         articleContentHtml: this.$refs.md.d_render,
         labelId: data.tag.labelId
       };
-      addArticle(article).then(result => {
-        console.log(result);
-        this.$router.push("/published");
-      });
+      //文章修改
+      if (this.$route.query.editFlag) {
+        article.articleId = this.$route.query.articleId;
+
+        editArticle(article).then(res => {
+          console.log(res);
+          this.$router.push({
+            path: "/article",
+            query: { labelId: article.labelId, articleId: article.articleId }
+          });
+        });
+      } else {
+        addArticle(article).then(result => {
+          console.log(result);
+          this.$router.push({
+            path: "/published",
+            query: {
+              articleId: result.data.article.articleId,
+              labelId: result.data.labelId,
+              title: result.data.article.articleTitle
+            }
+          });
+        });
+      }
     });
   },
-  mounted() {
+  activated() {
     //console.log(window.history.length);
     history.pushState(null, null, document.URL);
     window.addEventListener("popstate", this.goBack, false);
-    eventBus.$emit("addClick", null);
+    eventBus.$emit("addClickBind", null);
+    eventBus.$emit("buttonName", this.$route.query.publishOrEdit);
+    if (this.$route.query.editFlag) {
+      document.title = "文章修改";
+    } else {
+      document.title = "文章发布";
+    }
+
+    if (this.$route.query.editFlag && this.$route.query.articleId) {
+      //console.log(this.$route.query);
+      getArticleById(this.$route.query.articleId).then(res => {
+        // console.log(res);
+        this.$refs.md.d_value = res.data.article.articleContentMd;
+        const data = {
+          title: res.data.article.articleTitle,
+          labelId: res.data.labelId,
+          labelName: res.data.labelName,
+          editFlag: this.$route.query.editFlag
+        };
+        eventBus.$emit("setTitleAndTag", data);
+      });
+    }
   },
   destroyed() {
-    console.log(1);
     window.removeEventListener("popstate", this.goBack, false);
     eventBus.$emit("removeClick", null);
     //eventBus.$emit("initheader", null);
+  },
+  beforeRouteLeave(to, from, next) {
+    window.removeEventListener("popstate", this.goBack, false);
+    eventBus.$emit("removeClickBind", null);
+    console.log("离开editor");
+    next();
+  },
+  beforeRouteEnter(to, from, next) {
+    // eventBus.$emit("addClickBind", null);
+    console.log("进入editor");
+    next();
   }
 };
 </script>

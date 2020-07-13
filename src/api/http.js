@@ -31,7 +31,7 @@ instance.interceptors.request.use(config => {
 instance.interceptors.response.use(
     response => {
         if (response.status == 200) {
-            if (response.data.code == 2003 || response.data.code == 2000) {
+            if (response.data.code == 2003 || response.data.code == 2000 || response.data.code == 2004) {
                 return Promise.resolve(response.data)
             }
             //console.log(response.data)

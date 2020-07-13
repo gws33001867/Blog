@@ -88,3 +88,12 @@ export function deleteArticle(articleId) {
         }
     })
 }
+
+//文章编辑
+export function editArticle(data) {
+    return axios({
+        url: '/article/editArticle',
+        method: 'post',
+        data
+    })
+}

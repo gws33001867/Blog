@@ -1,8 +1,13 @@
 <template>
   <div id="layout">
-    <global-header></global-header>
+    <keep-alive>
+      <global-header></global-header>
+    </keep-alive>
     <div class="lance-main">
-      <router-view :key="$route.fullPath" />
+      <keep-alive>
+        <router-view v-if="$route.meta.keepAlive" :key="$route.fullPath" />
+      </keep-alive>
+      <router-view v-if="!$route.meta.keepAlive" />
     </div>
     <div class="lance-footer"></div>
   </div>
