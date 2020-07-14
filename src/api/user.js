@@ -59,11 +59,13 @@ const postAvatar = (formData) => {
     return axios.post('/user/changeAvatar', formData, config)
 }
 
-const getArticleListByUser = (userId) => {
+const getArticleListByUser = (pageNo, pageSize, userId) => {
     return request({
         url: '/article/getByUserId',
         method: 'get',
         params: {
+            pageNo,
+            pageSize,
             userId
         }
     })

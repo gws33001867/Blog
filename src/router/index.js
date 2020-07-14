@@ -33,7 +33,7 @@ const routes = [{
         children: [{
             path: '/index',
             meta: {
-                title: "首页"
+                title: "1080"
             },
             component: IndexPage
         }, {

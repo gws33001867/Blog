@@ -1,6 +1,11 @@
 <template>
   <div class="postList">
-    <ul class="entry-list">
+    <ul
+      class="entry-list"
+      v-infinite-scroll="loadMore"
+      infinite-scroll-disabled="busy"
+      infinite-scroll-distance="10"
+    >
       <li class="item" v-for="(article,id) in articleList" :key="id">
         <div class="user-info-row">
           <div class="avatar" :style="{'background-image': bgimage}"></div>
@@ -64,6 +69,11 @@ export default {
         isShow: false //表示当前文章的编辑删除弹窗不可见
       },
       visible: false,
+      busy: false,
+      pageNo: 1,
+      pageSize: 10,
+      spinning: false,
+      loading: false,
       articleForEdit: {}
     };
   },
@@ -76,9 +86,18 @@ export default {
     }
   },
   methods: {
-    getArticles() {
-      getArticleListByUser(this.$store.getters.userId).then(res => {
+    loadMore() {
+      this.busy = true;
+      this.spinning = true;
+      getArticleListByUser(
+        this.pageNo,
+        this.pageSize,
+        this.$store.getters.userId
+      ).then(res => {
+        //this.articleList.push(res.data);
+
         for (let i = 0; i < res.data.length; i++) {
+          // console.log(res.data[i]);
           const article = {
             articleId: res.data[i].article.articleId,
             articleTitle: res.data[i].article.articleTitle,
@@ -88,6 +107,14 @@ export default {
             isShow: false
           };
           this.articleList.push(article);
+        }
+
+        this.pageNo++;
+        this.spinning = false;
+        //console.log(this.articleList);
+        if (res.data.length == this.pageSize) {
+          this.busy = false;
+          this.loading = true;
         }
       });
     },
@@ -125,7 +152,7 @@ export default {
   },
   mounted() {
     this.articleList = [];
-    this.getArticles();
+    // this.getArticles();
   }
 };
 </script>

@@ -3,7 +3,7 @@
     <mavon-editor
       ref="md"
       :ishljs="true"
-      style="height:calc(100vh - 100px);z-index:1000"
+      style="height:calc(110vh - 100px);z-index:1000"
       @save="saveDoc"
       @change="updateDoc"
       v-model="value"
@@ -126,7 +126,7 @@ export default {
   max-width: 100%;
   height: 100%;
 }
-.main >>> .markdown-body pre {
-  background-color: black !important;
+.markdown-body >>> pre {
+  padding: 0;
 }
 </style>

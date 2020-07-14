@@ -77,7 +77,7 @@
         <a-avatar :size="38" :src="avatar" style="margin-left:50px;cursor: pointer;" v-if="seen2" />
       </a-popover>
       <div class="article-tag" id="articleTag" v-show="seen_tag">
-        <div class="title" style="padding-bottom:10px;">文章</div>
+        <div class="title" style="padding-bottom:10px;">{{publishOrEdit}}文章</div>
         <div style="width:100%">
           <span style="font-size:1rem">标签</span>
           <div style="display:flex;flex-wrap: wrap;">
