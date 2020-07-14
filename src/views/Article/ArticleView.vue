@@ -1,25 +1,7 @@
 <template>
   <div class="view">
     <div class="user-article">
-      <div class="lance-left">
-        <!-- 博主个人信息介绍，主页链接 -->
-        <!-- <side-box></side-box> -->
-
-        <!-- 最新文章导航栏 -->
-        <!-- <div id="asideNewArticle" class="lance-box">
-          <h3 class="aside-title">最新文章</h3>
-          <div class="aside-content">
-            <ul class="info-list clearfix">
-              <li class="clearfix">
-                <a>JVM的学习</a>
-              </li>
-              <li class="clearfix">
-                <a>Docker学习</a>
-              </li>
-            </ul>
-          </div>
-        </div>-->
-      </div>
+      <div class="lance-left"></div>
 
       <div class="lance-right">
         <div class="article-content">
@@ -91,7 +73,7 @@
         <div id="right-bar">
           <li
             :class="{'with-badge':isActive}"
-            :style="{'color':dianzanColor}"
+            :style="{'color':dianzanColor,'--badgeColor':badgeColor}"
             @click="dianzan"
             :badge="countDianzan"
           >
@@ -157,8 +139,10 @@ export default {
     IconFont,
     ArticleList
   },
+  props: {},
   data() {
     return {
+      badgeColor: { type: String, default: "#b2bac2" },
       bgimage: "",
       title: "",
       labelId: "",
@@ -202,7 +186,18 @@ export default {
       return this.isUserLike ? "#52c41a" : "";
     }
   },
-  mounted() {
+  watch: {
+    isUserLike(value) {
+      console.log(value);
+      if (value) {
+        this.badgeColor = "#74ca46";
+      } else {
+        this.badgeColor = "#b2bac2";
+      }
+      console.log(this.badgeColor);
+    }
+  },
+  created() {
     if (JSON.stringify(this.$route.query) === "{}") {
       this.$router.push("/");
     } else {
@@ -235,10 +230,16 @@ export default {
           this.$route.query.articleId
         ).then(res => {
           this.isUserLike = res.data;
+          if (this.isUserLike) {
+            this.badgeColor = "#74ca46";
+          } else {
+            this.badgeColor = "#b2bac2";
+          }
         });
       }
     }
   },
+  mounted() {},
   methods: {
     goAnchor() {
       this.$el.querySelector("#a01").scrollIntoView(true);
@@ -495,7 +496,7 @@ h3 {
   line-height: 1;
   white-space: nowrap;
   color: #fff;
-  background-color: #b2bac2;
+  background-color: var(--badgeColor);
   border-radius: 0.7rem;
   transform-origin: left top;
   transform: scale(0.75);
